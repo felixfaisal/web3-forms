@@ -1,5 +1,8 @@
-export default function Home() {
-  const currentAccount = "0x03D9A361497712cc8D010E05D7EACf4845Eb86B8";
+import AppContext from "../context";
+import { useContext } from "react";
+export default function Home({ connectWallet, switchAccounts }) {
+  const { account } = useContext(AppContext);
+  // console.log(account);
   const data = {
     questions: [
       "Which company is building the video streaming layer",
@@ -21,10 +24,33 @@ export default function Home() {
           </p>
           <div className="bg-gray-300 h-[1px] w-[100%] mb-2"></div>
           <p className="text-sm font-semibold">
-            {currentAccount.slice(0, 7) + "..." + currentAccount.slice(37, 42)}
-            <span className="pl-2 text-[13px] text-blue-500 cursor-pointer">
-              switch account
-            </span>
+            {account ? (
+              account.length ? (
+                <span>
+                  {account.slice(0, 7) + "..." + account.slice(37, 42)}
+                  <span
+                    className="pl-2 text-sm text-blue-500 cursor-pointer"
+                    onClick={switchAccounts}
+                  >
+                    switch account
+                  </span>
+                </span>
+              ) : (
+                <span
+                  className="text-md text-blue-500 cursor-pointer"
+                  onClick={connectWallet}
+                >
+                  connect wallet
+                </span>
+              )
+            ) : (
+              <span
+                className="text-md text-blue-500 cursor-pointer"
+                onClick={connectWallet}
+              >
+                connect wallet
+              </span>
+            )}
           </p>
           <p className="text-red-500 text-sm mt-1">*Required</p>
         </div>
@@ -50,18 +76,26 @@ export default function Home() {
           );
         })}
         <div className="flex justify-start items-center w-[98%] max-w-[600px]">
-          <button
-            type="submit"
-            className="p-2  m-3 bg-red-500 py-1 px-3 rounded-md text-white font-semibold hover:bg-red-600 relative -left-1 md:relative md:-left-3"
-          >
-            Submit
-          </button>
+          {account ? (
+            account.length ? (
+              <button
+                type="submit"
+                className="p-2  m-3 bg-red-500 py-1 px-3 rounded-md text-white font-semibold hover:bg-red-600 relative -left-1 md:relative md:-left-3"
+              >
+                Submit
+              </button>
+            ) : (
+              ""
+            )
+          ) : (
+            ""
+          )}
         </div>
       </form>
       <footer className="mt-3">
         <p className="text-sm text-gray-500">
           Form was created by{" "}
-          {currentAccount.slice(0, 7) + "..." + currentAccount.slice(37, 42)}{" "}
+          {/* {account.slice(0, 7) + "..." + account.slice(37, 42)}{" "} */}
         </p>
         <p className="text-xl mt-3 text-gray-500 font-semibold text-center">
           <i>3FORMS</i>
