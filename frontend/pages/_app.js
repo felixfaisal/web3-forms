@@ -11,6 +11,8 @@ function MyApp({ Component, pageProps }) {
   const [account, setAccount] = useState();
   const [network, setNetwork] = useState();
   const [chainId, setChainId] = useState();
+  const [formData, setFormData] = useState([]);
+  const [response, setResponse] = useState({ 1: "", 2: "", 3: "", 4: "" });
   const [isReturningUser, setIsReturningUser] = useState(false);
   const connectWallet = async () => {
     try {
@@ -87,6 +89,7 @@ function MyApp({ Component, pageProps }) {
         ],
       });
     }
+    getCurrentAccount();
   };
 
   useEffect(() => {
@@ -119,16 +122,25 @@ function MyApp({ Component, pageProps }) {
     }
   }, [provider]);
 
+  const submitForm = (e) => {
+    e.preventDefault();
+    setFormData([...formData, response]);
+    console.log(response);
+  };
+
   useEffect(() => {
     getConnectedWallet();
     getCurrentAccount();
   }, []);
   return (
-    <AppContext.Provider value={{ account }}>
+    <AppContext.Provider value={{ account, formData, response }}>
       <Component
         {...pageProps}
         connectWallet={connectWallet}
         switchAccounts={switchAccounts}
+        setFormData={setFormData}
+        submitForm={submitForm}
+        setResponse={setResponse}
       />
     </AppContext.Provider>
   );
