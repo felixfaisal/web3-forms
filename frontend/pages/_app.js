@@ -5,6 +5,11 @@ import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 import WalletConnect from "@walletconnect/web3-provider";
 import Web3Modal from "web3modal";
 import { ethers } from "ethers";
+import * as IPFS from 'ipfs-core';
+import {
+  CONTRACT_ADDRESS,
+  CONTRACT_ABI
+} from './constants/addresses';
 function MyApp({ Component, pageProps }) {
   const [provider, setProvider] = useState();
   const [library, setLibrary] = useState();
@@ -88,6 +93,69 @@ function MyApp({ Component, pageProps }) {
       });
     }
   };
+
+  const upload_to_ipfs = async () => {
+    const ipfs = await IPFS.create();
+    const {cid} = await ipfs.add('Hello World');
+    console.info(cid);
+  };
+
+  const create_the_form = async () => {
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+        CONTRACT_ADDRESS, 
+        CONTRACT_ABI, 
+        signer
+    );
+    const create_form_txn = await contract.createTheForm(
+        "0xCid"
+    );
+    await create_form_txn.wait();
+  }
+
+  const fill_the_form = async () => {
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner(); 
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESS, 
+      CONTRACT_ABI, 
+      signer
+    );
+    const fill_the_form_txn = await contract.fillTheForm(
+      "0xCID", 
+      1
+    );
+    await fill_the_form_txn();
+  }
+
+  const is_the_form_filled = async () => {
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESS, 
+      CONTRACT_ABI, 
+      signer
+    );
+    const is_the_form_filled_txn = await contract.isTheFormFilled(
+      1
+    );
+    await is_the_form_filled_txn();
+  }
+
+  const user_responses = async () => {
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESS, 
+      CONTRACT_ABI, 
+      signer
+    ); 
+    const user_responses_txn = await contract.myResponses(
+      1
+    );
+    await user_responses_txn();
+  }
 
   useEffect(() => {
     getCurrentAccount();
