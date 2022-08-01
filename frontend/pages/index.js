@@ -1,7 +1,13 @@
 import AppContext from "../context";
 import { useContext } from "react";
-export default function Home({ connectWallet, switchAccounts }) {
-  const { account } = useContext(AppContext);
+export default function Home({
+  connectWallet,
+  switchAccounts,
+  setFormData,
+  submitForm,
+  setResponse,
+}) {
+  const { account, formData, response } = useContext(AppContext);
   // console.log(account);
   const data = {
     questions: [
@@ -54,33 +60,79 @@ export default function Home({ connectWallet, switchAccounts }) {
           </p>
           <p className="text-red-500 text-sm mt-1">*Required</p>
         </div>
-        {data.questions.map((item, index) => {
-          return (
-            <div
-              className="flex justify-center items-start p-4  m-3 flex-col w-[95%] max-w-[600px] rounded-lg bg-white border-1 border-solid border-gray-400"
-              key={index}
-            >
-              <p className="mb-5">
-                {item}
-                <span className="text-red-500">*</span>
-              </p>
-              <input
-                type="text"
-                className="my-1 border-t-transparent border-l-transparent border-r-transparent border-b-gray-300 border-2 border-solid
+
+        <div className="flex justify-center items-start p-4  m-3 flex-col w-[95%] max-w-[600px] rounded-lg bg-white border-1 border-solid border-gray-400">
+          <p className="mb-5">
+            Which company is building the video streaming layer
+            <span className="text-red-500">*</span>
+          </p>
+          <input
+            type="text"
+            className="my-1 border-t-transparent border-l-transparent border-r-transparent border-b-gray-300 border-2 border-solid
             outline-none
             focus:border-b-red-500 transition-colors text-sm
             w-[90%]
+
             "
-              />
-            </div>
-          );
-        })}
+            onChange={(e) => setResponse({ ...response, 1: e.target.value })}
+          />
+        </div>
+        <div className="flex justify-center items-start p-4  m-3 flex-col w-[95%] max-w-[600px] rounded-lg bg-white border-1 border-solid border-gray-400">
+          <p className="mb-5">
+            What is decentraland
+            <span className="text-red-500">*</span>
+          </p>
+          <input
+            type="text"
+            className="my-1 border-t-transparent border-l-transparent border-r-transparent border-b-gray-300 border-2 border-solid
+            outline-none
+            focus:border-b-red-500 transition-colors text-sm
+            w-[90%]
+
+            "
+            onChange={(e) => setResponse({ ...response, 2: e.target.value })}
+          />
+        </div>
+        <div className="flex justify-center items-start p-4  m-3 flex-col w-[95%] max-w-[600px] rounded-lg bg-white border-1 border-solid border-gray-400">
+          <p className="mb-5">
+            Name two popular NFT project
+            <span className="text-red-500">*</span>
+          </p>
+          <input
+            type="text"
+            className="my-1 border-t-transparent border-l-transparent border-r-transparent border-b-gray-300 border-2 border-solid
+            outline-none
+            focus:border-b-red-500 transition-colors text-sm
+            w-[90%]
+
+            "
+            onChange={(e) => setResponse({ ...response, 3: e.target.value })}
+          />
+        </div>
+        <div className="flex justify-center items-start p-4  m-3 flex-col w-[95%] max-w-[600px] rounded-lg bg-white border-1 border-solid border-gray-400">
+          <p className="mb-5">
+            Is NFT metadata mutable
+            <span className="text-red-500">*</span>
+          </p>
+          <input
+            type="text"
+            className="my-1 border-t-transparent border-l-transparent border-r-transparent border-b-gray-300 border-2 border-solid
+            outline-none
+            focus:border-b-red-500 transition-colors text-sm
+            w-[90%]
+
+            "
+            onChange={(e) => setResponse({ ...response, 4: e.target.value })}
+          />
+        </div>
+
         <div className="flex justify-start items-center w-[98%] max-w-[600px]">
           {account ? (
             account.length ? (
               <button
                 type="submit"
                 className="p-2  m-3 bg-red-500 py-1 px-3 rounded-md text-white font-semibold hover:bg-red-600 relative -left-1 md:relative md:-left-3"
+                onClick={(e) => submitForm(e)}
               >
                 Submit
               </button>
