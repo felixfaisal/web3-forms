@@ -74,7 +74,9 @@ export default function Home({
             w-[90%]
 
             "
-            onChange={(e) => setResponse({ ...response, 1: e.target.value })}
+            onChange={(e) =>
+              setResponse({ ...response, first: e.target.value })
+            }
           />
         </div>
         <div className="flex justify-center items-start p-4  m-3 flex-col w-[95%] max-w-[600px] rounded-lg bg-white border-1 border-solid border-gray-400">
@@ -90,7 +92,7 @@ export default function Home({
             w-[90%]
 
             "
-            onChange={(e) => setResponse({ ...response, 2: e.target.value })}
+            onChange={(e) => setResponse({ ...response, sec: e.target.value })}
           />
         </div>
         <div className="flex justify-center items-start p-4  m-3 flex-col w-[95%] max-w-[600px] rounded-lg bg-white border-1 border-solid border-gray-400">
@@ -106,7 +108,9 @@ export default function Home({
             w-[90%]
 
             "
-            onChange={(e) => setResponse({ ...response, 3: e.target.value })}
+            onChange={(e) =>
+              setResponse({ ...response, third: e.target.value })
+            }
           />
         </div>
         <div className="flex justify-center items-start p-4  m-3 flex-col w-[95%] max-w-[600px] rounded-lg bg-white border-1 border-solid border-gray-400">
@@ -122,7 +126,9 @@ export default function Home({
             w-[90%]
 
             "
-            onChange={(e) => setResponse({ ...response, 4: e.target.value })}
+            onChange={(e) =>
+              setResponse({ ...response, fourth: e.target.value })
+            }
           />
         </div>
 

@@ -64,7 +64,6 @@ contract Web3Forms {
         require(isValidFormId,"You haven't filled this form");
         Form memory requiredResponse;
         Form[] memory formsAlreadyFilled = numberOfFormsFilled[msg.sender];
-        formsAlreadyFilled[0].creator;
         for(uint i = 0; i < formsAlreadyFilled.length;i++){
             if(formsAlreadyFilled[i].formId == _formId){
                 requiredResponse = formsAlreadyFilled[i];
