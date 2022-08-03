@@ -17,10 +17,10 @@ function MyApp({ Component, pageProps }) {
   const [chainId, setChainId] = useState();
   const [formData, setFormData] = useState([]);
   const [response, setResponse] = useState({
-    first: "",
-    sec: "",
-    third: "",
-    fourth: "",
+    1: "",
+    2: "",
+    3: "",
+    4: "",
   });
   const [isReturningUser, setIsReturningUser] = useState(false);
   const [responseData, setResponseData] = useState({});
@@ -192,7 +192,7 @@ function MyApp({ Component, pageProps }) {
         CONTRACT_ABI,
         signer
       );
-      const fill_the_form_txn = await contract.fillTheForm(added.path, 1);
+      const fill_the_form_txn = await contract.fillTheForm(added.path, 0);
       await fill_the_form_txn.wait();
     } catch (error) {
       console.log(error);
