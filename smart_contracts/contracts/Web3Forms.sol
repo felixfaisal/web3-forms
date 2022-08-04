@@ -1,76 +1,56 @@
-// SPDX-License-Identifier:MIT
-
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-contract Web3Forms {
+contract Form{
+    uint32 public nonce = 0;
 
-    uint formsCount;
-    address public s_owner;
-
-    modifier onlyOwner{
-        require(msg.sender == s_owner);
-        _;
+    struct Record{
+        string CID;
+        uint32 form_id;
+        address responder;
     }
 
-    constructor(){
-        s_owner= msg.sender;
-    }
+    Record record;
 
-    struct Form{
-        uint formId;
+    struct FormMetaData{
+        string CID; 
+        uint32 form_id;
         address creator;
-        uint publishedTime;
-        string formData;
-        uint numberOfResponses;
     }
 
-    Form[] forms;
-    mapping(address => Form[]) public numberOfFormsFilled;
-    mapping(uint => Form) public formIdentifier;
+    Form form;
 
-    function createTheForm(string memory _formData) external onlyOwner{
-        Form memory form = Form(
-           formsCount ,msg.sender, block.timestamp,_formData,0
+    mapping(uint32 => Record[])  FormResponses;
+    mapping(address => Record[]) UserResponses;
+    mapping(uint32 => FormMetaData) public MetaData;
+    mapping(address => uint32[]) public FormCreators;
+    mapping(address => mapping(uint32 => bool)) public IsFormFilled;
+
+    function createTheForm(string memory _formData) external{
+        FormMetaData memory form_meta_data = FormMetaData(
+           _formData , nonce+1 , msg.sender
         );
-        forms.push(form);
-        formIdentifier[formsCount] = form;
-        formsCount++;
+        MetaData[nonce+1] = form_meta_data;
+        FormCreators[msg.sender].push(nonce+1);
+        nonce += 1;
     }
 
-
-    function fillTheForm(string memory _formData, uint _formId) external {
-        Form memory formToFill = formIdentifier[_formId];
-        formToFill.formData = _formData;
-        formToFill.numberOfResponses += 1;
-        numberOfFormsFilled[msg.sender].push(formToFill); 
+    function fillForm(string memory _formData, uint32 _formId) external{
+        require(!IsFormFilled[msg.sender][_formId]);
+        Record memory record_data = Record(
+            _formData, _formId, msg.sender
+        );
+        FormResponses[_formId].push(record_data);
+        UserResponses[msg.sender].push(record_data);
+        IsFormFilled[msg.sender][_formId] = true;
     }
 
-
-    function isTheFormFilled(uint _formId) public view returns(bool){
-        bool isFormFilled = false;
-        Form[] memory formsAlreadyFilled = numberOfFormsFilled[msg.sender];
-
-        for(uint i = 0; i < formsAlreadyFilled.length;i++){
-            if(formsAlreadyFilled[i].formId == _formId){
-                isFormFilled = true;
-            }
-        }
-        return isFormFilled;
+    function formResponses(uint32 _formId) public view returns(Record[] memory){
+        return FormResponses[_formId]; 
     }
 
-
-    function myResponses(uint _formId) external view returns(Form memory){
-        bool isValidFormId = isTheFormFilled(_formId);
-        require(isValidFormId,"You haven't filled this form");
-        Form memory requiredResponse;
-        Form[] memory formsAlreadyFilled = numberOfFormsFilled[msg.sender];
-        for(uint i = 0; i < formsAlreadyFilled.length;i++){
-            if(formsAlreadyFilled[i].formId == _formId){
-                requiredResponse = formsAlreadyFilled[i];
-                break;
-            }
-        }
-        return requiredResponse;
+    function userResponses() public view returns(Record[] memory){
+        return UserResponses[msg.sender];
     }
 
 }
