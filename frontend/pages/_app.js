@@ -7,6 +7,7 @@ import Web3Modal from "web3modal";
 import { ethers } from "ethers";
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../constants/addresses";
 import { create } from "ipfs-http-client";
+const axios = require("axios").default;
 
 const client = create("https://ipfs.infura.io:5001/api/v0");
 function MyApp({ Component, pageProps }) {
@@ -20,10 +21,12 @@ function MyApp({ Component, pageProps }) {
     1: "",
     2: "",
     3: "",
-    4: "",
   });
   const [isReturningUser, setIsReturningUser] = useState(false);
   const [responseData, setResponseData] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [formMetadata, setFormMetadata] = useState(null);
+  const [formMetadataLoading, setFormMetadataLoading] = useState(true);
   const connectWallet = async () => {
     try {
       const providerOptions = {
@@ -108,31 +111,17 @@ function MyApp({ Component, pageProps }) {
     console.info(cid);
   };
 
-  const create_the_form = async () => {
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      CONTRACT_ABI,
-      signer
-    );
-    const create_form_txn = await contract.createTheForm("0xCid");
-    await create_form_txn.wait();
-  };
-
-  const fill_the_form = async () => {};
-
-  const is_the_form_filled = async () => {
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      CONTRACT_ABI,
-      signer
-    );
-    const is_the_form_filled_txn = await contract.isTheFormFilled(1);
-    await is_the_form_filled_txn();
-  };
+  // const create_the_form = async () => {
+  //   const provider = new ethers.providers.Web3Provider(ethereum);
+  //   const signer = provider.getSigner();
+  //   const contract = new ethers.Contract(
+  //     CONTRACT_ADDRESS,
+  //     CONTRACT_ABI,
+  //     signer
+  //   );
+  //   const create_form_txn = await contract.createTheForm("0xCid");
+  //   await create_form_txn.wait();
+  // };
 
   const user_responses = async () => {
     const provider = new ethers.providers.Web3Provider(ethereum);
@@ -192,8 +181,29 @@ function MyApp({ Component, pageProps }) {
         CONTRACT_ABI,
         signer
       );
-      const fill_the_form_txn = await contract.fillTheForm(added.path, 0);
+      const fill_the_form_txn = await contract.fillForm(added.path, 1);
       await fill_the_form_txn.wait();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const myResponses = async () => {
+    try {
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        CONTRACT_ABI,
+        signer
+      );
+      const responsesData = await contract.userResponses();
+      const response = await axios.get(
+        `https://ipfs.infura.io/ipfs/${responsesData[0].CID}`
+      );
+
+      console.log(response);
+      setResponseData(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -203,8 +213,20 @@ function MyApp({ Component, pageProps }) {
     getConnectedWallet();
     getCurrentAccount();
   }, []);
+
   return (
-    <AppContext.Provider value={{ account, formData, response, responseData }}>
+    <AppContext.Provider
+      value={{
+        account,
+        formData,
+        response,
+        responseData,
+        showModal,
+        formMetadata,
+        formMetadataLoading,
+        responseData,
+      }}
+    >
       <Component
         {...pageProps}
         connectWallet={connectWallet}
@@ -212,7 +234,11 @@ function MyApp({ Component, pageProps }) {
         setFormData={setFormData}
         submitForm={submitForm}
         setResponse={setResponse}
+        setShowModal={setShowModal}
         setResponseData={setResponseData}
+        myResponses={myResponses}
+        setFormMetadata={setFormMetadata}
+        setFormMetadataLoading={setFormMetadataLoading}
       />
     </AppContext.Provider>
   );

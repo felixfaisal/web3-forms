@@ -1,11 +1,14 @@
 import React from "react";
 import AppContext from "../context";
 import { useEffect, useContext } from "react";
-import { ethers } from "ethers";
-import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../constants/addresses";
-const axios = require("axios").default;
-const Dashboard = ({ setResponseData }) => {
-  const { responseData } = useContext(AppContext);
+import Modal from "../components/modal";
+const Dashboard = ({
+  setResponseData,
+  setShowModal,
+  myResponses,
+  responseData,
+}) => {
+  const { showModal } = useContext(AppContext);
 
   const responsesArray = [
     { formId: 1, cid: "", creator: "0xAgdhh929920" },
@@ -16,27 +19,6 @@ const Dashboard = ({ setResponseData }) => {
     { formId: 6, cid: "", creator: "0xhsh72663ggw" },
   ];
 
-  const myResponses = async () => {
-    try {
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        CONTRACT_ADDRESS,
-        CONTRACT_ABI,
-        signer
-      );
-      const responsesData = await contract.myResponses(0);
-      let responseHash = responsesData.formData;
-      let responseData = await axios.get(
-        `https://ipfs.infura.io/ipfs/${responseHash}`
-      );
-
-      console.log(responseData.data);
-      setResponseData(responseData.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   useEffect(() => {
     myResponses();
   }, []);
@@ -46,19 +28,17 @@ const Dashboard = ({ setResponseData }) => {
       <h1 className="text-3xl font-semibold text-center text-red-500 m-6">
         Forms Diary
       </h1>
-      {/* <div>
-        <p>A. {responseData[1]} </p>
-        <p>A. {responseData[2]} </p>
-        <p>A. {responseData[3]} </p>
-        <p>A. {responseData[4]} </p>
-      </div> */}
+
       <div className="flex justify-center items-center flex-wrap mb-6">
         {responsesArray.map((response) => {
           return (
             <div
               className="w-[300px] h-[250px] m-4  rounded-xl bg-gray-100"
               key={response.formId}
-              onClick={() => console.log(response.formId)}
+              onClick={() => {
+                console.log(response.formId);
+                setShowModal(true);
+              }}
             >
               <img
                 src="https://images.pexels.com/photos/7130560/pexels-photo-7130560.jpeg?auto=compress&cs=tinysrgb&w=600"
@@ -88,6 +68,7 @@ const Dashboard = ({ setResponseData }) => {
           );
         })}
       </div>
+      <Modal setShowModal={setShowModal} showModal={showModal} />
     </section>
   );
 };

@@ -1,22 +1,47 @@
 import AppContext from "../context";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
+import { ethers } from "ethers";
+import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../constants/addresses";
+const axios = require("axios").default;
+
+import Loader from "../components/loader";
 export default function Form({
   connectWallet,
   switchAccounts,
-  setFormData,
   submitForm,
   setResponse,
+  setFormMetadata,
+  setFormMetadataLoading,
 }) {
-  const { account, formData, response } = useContext(AppContext);
-  // console.log(account);
-  const data = {
-    questions: [
-      "Which company is building the video streaming layer",
-      "What is decentraland",
-      "Name two popular NFT projects",
-      "Is an NFT mutable",
-    ],
-  };
+  const { account, response, formMetadata, formMetadataLoading } =
+    useContext(AppContext);
+
+  useEffect(() => {
+    const fetchForm = async (formId) => {
+      try {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const contract = new ethers.Contract(
+          CONTRACT_ADDRESS,
+          CONTRACT_ABI,
+          signer
+        );
+        const contractFormMetadata = await contract.MetaData(formId);
+        const formMetadataResponse = await axios.get(
+          `https://ipfs.infura.io/ipfs/${contractFormMetadata.CID}`
+        );
+        if (formMetadataResponse) {
+          setFormMetadata(formMetadataResponse.data);
+          setFormMetadataLoading(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchForm(1);
+  }, [formMetadataLoading]);
+  console.log(formMetadata);
+
   return (
     <main className="flex justify-center items-center  p-3 m-3 flex-col">
       <form
@@ -61,70 +86,79 @@ export default function Form({
           <p className="text-red-500 text-sm mt-1">*Required</p>
         </div>
 
-        <div className="flex justify-center items-start p-4  m-3 flex-col w-[95%] max-w-[600px] rounded-lg bg-white border-1 border-solid border-gray-400">
-          <p className="mb-5">
-            Which company is building the video streaming layer
-            <span className="text-red-500">*</span>
-          </p>
-          <input
-            type="text"
-            className="my-1 border-t-transparent border-l-transparent border-r-transparent border-b-gray-300 border-2 border-solid
+        {!formMetadataLoading ? (
+          <>
+            <div className="flex justify-center items-start p-4  m-3 flex-col w-[95%] max-w-[600px] rounded-lg bg-white border-1 border-solid border-gray-400">
+              {formMetadata.length ? (
+                <p className="mb-5">
+                  {formMetadata[0][0]}
+                  <span className="text-red-500">*</span>
+                </p>
+              ) : (
+                ""
+              )}
+
+              <input
+                type="text"
+                className="my-1 border-t-transparent border-l-transparent border-r-transparent border-b-gray-300 border-2 border-solid
             outline-none
             focus:border-b-red-500 transition-colors text-sm
             w-[90%]
 
             "
-            onChange={(e) => setResponse({ ...response, 1: e.target.value })}
-          />
-        </div>
-        <div className="flex justify-center items-start p-4  m-3 flex-col w-[95%] max-w-[600px] rounded-lg bg-white border-1 border-solid border-gray-400">
-          <p className="mb-5">
-            What is decentraland
-            <span className="text-red-500">*</span>
-          </p>
-          <input
-            type="text"
-            className="my-1 border-t-transparent border-l-transparent border-r-transparent border-b-gray-300 border-2 border-solid
+                onChange={(e) =>
+                  setResponse({ ...response, 1: e.target.value })
+                }
+              />
+            </div>
+            <div className="flex justify-center items-start p-4  m-3 flex-col w-[95%] max-w-[600px] rounded-lg bg-white border-1 border-solid border-gray-400">
+              {formMetadata.length ? (
+                <p className="mb-5">
+                  {formMetadata[1][0]}
+                  <span className="text-red-500">*</span>
+                </p>
+              ) : (
+                ""
+              )}
+              <input
+                type="text"
+                className="my-1 border-t-transparent border-l-transparent border-r-transparent border-b-gray-300 border-2 border-solid
             outline-none
             focus:border-b-red-500 transition-colors text-sm
             w-[90%]
 
             "
-            onChange={(e) => setResponse({ ...response, 2: e.target.value })}
-          />
-        </div>
-        <div className="flex justify-center items-start p-4  m-3 flex-col w-[95%] max-w-[600px] rounded-lg bg-white border-1 border-solid border-gray-400">
-          <p className="mb-5">
-            Name two popular NFT project
-            <span className="text-red-500">*</span>
-          </p>
-          <input
-            type="text"
-            className="my-1 border-t-transparent border-l-transparent border-r-transparent border-b-gray-300 border-2 border-solid
+                onChange={(e) =>
+                  setResponse({ ...response, 2: e.target.value })
+                }
+              />
+            </div>
+            <div className="flex justify-center items-start p-4  m-3 flex-col w-[95%] max-w-[600px] rounded-lg bg-white border-1 border-solid border-gray-400">
+              {formMetadata.length ? (
+                <p className="mb-5">
+                  {formMetadata[2][0]}
+                  <span className="text-red-500">*</span>
+                </p>
+              ) : (
+                ""
+              )}
+              <input
+                type="text"
+                className="my-1 border-t-transparent border-l-transparent border-r-transparent border-b-gray-300 border-2 border-solid
             outline-none
             focus:border-b-red-500 transition-colors text-sm
             w-[90%]
 
             "
-            onChange={(e) => setResponse({ ...response, 3: e.target.value })}
-          />
-        </div>
-        <div className="flex justify-center items-start p-4  m-3 flex-col w-[95%] max-w-[600px] rounded-lg bg-white border-1 border-solid border-gray-400">
-          <p className="mb-5">
-            Is NFT metadata mutable
-            <span className="text-red-500">*</span>
-          </p>
-          <input
-            type="text"
-            className="my-1 border-t-transparent border-l-transparent border-r-transparent border-b-gray-300 border-2 border-solid
-            outline-none
-            focus:border-b-red-500 transition-colors text-sm
-            w-[90%]
-
-            "
-            onChange={(e) => setResponse({ ...response, 4: e.target.value })}
-          />
-        </div>
+                onChange={(e) =>
+                  setResponse({ ...response, 3: e.target.value })
+                }
+              />
+            </div>
+          </>
+        ) : (
+          <Loader />
+        )}
 
         <div className="flex justify-start items-center w-[98%] max-w-[600px]">
           {account ? (
