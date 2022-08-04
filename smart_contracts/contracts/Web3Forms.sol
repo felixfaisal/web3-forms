@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-contract Form{
+contract Web3Forms{
     uint32 public nonce = 0;
 
     struct Record{
@@ -18,7 +18,7 @@ contract Form{
         address creator;
     }
 
-    Form form;
+    FormMetaData form;
 
     mapping(uint32 => Record[])  FormResponses;
     mapping(address => Record[]) UserResponses;
