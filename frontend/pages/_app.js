@@ -198,13 +198,12 @@ function MyApp({ Component, pageProps }) {
         signer
       );
       const responsesData = await contract.userResponses();
-      // let responseHash = responsesData.formData;
-      // let responseData = await axios.get(
-      //   `https://ipfs.infura.io/ipfs/${responseHash}`
-      // );
+      const response = await axios.get(
+        `https://ipfs.infura.io/ipfs/${responsesData[0].CID}`
+      );
 
-      console.log(responseData);
-      setResponseData(responseData);
+      console.log(response);
+      setResponseData(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -225,6 +224,7 @@ function MyApp({ Component, pageProps }) {
         showModal,
         formMetadata,
         formMetadataLoading,
+        responseData,
       }}
     >
       <Component
@@ -236,7 +236,6 @@ function MyApp({ Component, pageProps }) {
         setResponse={setResponse}
         setShowModal={setShowModal}
         setResponseData={setResponseData}
-        // fetchForm={fetchForm}
         myResponses={myResponses}
         setFormMetadata={setFormMetadata}
         setFormMetadataLoading={setFormMetadataLoading}

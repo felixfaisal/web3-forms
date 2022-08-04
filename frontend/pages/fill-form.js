@@ -15,15 +15,7 @@ export default function Form({
 }) {
   const { account, response, formMetadata, formMetadataLoading } =
     useContext(AppContext);
-  // console.log(account);
-  const data = {
-    questions: [
-      "Which company is building the video streaming layer",
-      "What is decentraland",
-      "Name two popular NFT projects",
-      "Is an NFT mutable",
-    ],
-  };
+
   useEffect(() => {
     const fetchForm = async (formId) => {
       try {

@@ -2,7 +2,12 @@ import React from "react";
 import AppContext from "../context";
 import { useEffect, useContext } from "react";
 import Modal from "../components/modal";
-const Dashboard = ({ setResponseData, setShowModal, myResponses }) => {
+const Dashboard = ({
+  setResponseData,
+  setShowModal,
+  myResponses,
+  responseData,
+}) => {
   const { showModal } = useContext(AppContext);
 
   const responsesArray = [
