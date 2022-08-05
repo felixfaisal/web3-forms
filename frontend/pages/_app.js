@@ -23,7 +23,8 @@ function MyApp({ Component, pageProps }) {
     3: "",
   });
   const [isReturningUser, setIsReturningUser] = useState(false);
-  const [responseData, setResponseData] = useState({});
+  const [responseData, setResponseData] = useState([]);
+  const [responseDataUser, setResponseDataUser] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [formMetadata, setFormMetadata] = useState(null);
   const [formMetadataLoading, setFormMetadataLoading] = useState(true);
@@ -201,9 +202,12 @@ function MyApp({ Component, pageProps }) {
       const response = await axios.get(
         `https://ipfs.infura.io/ipfs/${responsesData[0].CID}`
       );
+      // console.log(responsesData);
 
-      console.log(response);
-      setResponseData(response.data);
+      // console.log(response);
+      // {Faisal, }
+      setResponseDataUser(response.data);
+      setResponseData(responsesData);
     } catch (error) {
       console.log(error);
     }

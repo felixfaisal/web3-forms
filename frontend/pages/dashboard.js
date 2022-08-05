@@ -5,10 +5,9 @@ import Modal from "../components/modal";
 const Dashboard = ({
   setResponseData,
   setShowModal,
-  myResponses,
-  responseData,
+  myResponses
 }) => {
-  const { showModal } = useContext(AppContext);
+  const { showModal, responseData, responseDataUser} = useContext(AppContext);
 
   const responsesArray = [
     { formId: 1, cid: "", creator: "0xAgdhh929920" },
@@ -23,6 +22,9 @@ const Dashboard = ({
     myResponses();
   }, []);
 
+  console.log(responseDataUser)
+  console.log(responseData) // 
+
   return (
     <section className="mb-4">
       <h1 className="text-3xl font-semibold text-center text-red-500 m-6">
@@ -30,13 +32,13 @@ const Dashboard = ({
       </h1>
 
       <div className="flex justify-center items-center flex-wrap mb-6">
-        {responsesArray.map((response) => {
+        {responseData.map((response) => {
           return (
             <div
               className="w-[300px] h-[250px] m-4  rounded-xl bg-gray-100"
-              key={response.formId}
+              key={response[2]}
               onClick={() => {
-                console.log(response.formId);
+                console.log(response[1]);
                 setShowModal(true);
               }}
             >
@@ -46,7 +48,7 @@ const Dashboard = ({
                 className="h-[150px] w-[100%]"
               />
               <p className="text-[12px] font-semibold mx-2 text-gray-400 mt-1">
-                FORM ID #{response.formId}
+                FORM ID #{response[1]}
               </p>
               <div className="flex justify-end items-start">
                 <p className="text-[12px] text-gray-400 font-semibold mx-2 ">
@@ -55,9 +57,9 @@ const Dashboard = ({
               </div>
               <div className="flex justify-end items-center">
                 <p className="text-red-500 font-semibold text-md ">
-                  {response.creator.slice(0, 7) +
+                  {response[2].slice(0, 7) +
                     "..." +
-                    response.creator.slice(37, 42)}
+                    response[2].slice(37, 42)}
                 </p>
                 <img
                   className="bg-gradient-to-b from-red-500 h-7 w-7 rounded-full mx-2 object-cover mt-1 mr-2"
