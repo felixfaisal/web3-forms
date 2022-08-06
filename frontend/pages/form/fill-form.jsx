@@ -4,13 +4,22 @@ import { useEffect, useState, useContext } from "react";
 import NewFormItem from "../../components/Form/NewFormItem";
 import SelectItem from "../../components/Form/SelectItem";
 import AppContext from "../../context";
+import { ethers } from "ethers";
+import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../../constants/addresses";
+const axios = require("axios").default;
+
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 
-const FillForm = ({ connectWallet }) => {
+const FillForm = ({
+  connectWallet,
+  setFormMetadata,
+  setFormMetadataLoading,
+  getCurrentAccount,
+}) => {
   const { account } = useContext(AppContext);
 
   const [formTitle, setFormTitle] = useLocalStorage("formTitle", "");
-  const [fieldTypes, setFieldTypes] = useLocalStorage("inputFields", []);
+  const [fieldTypes, setFieldTypes] = useState([]);
   const [inputFields, setInputFields] = useState([]);
   const [formResponse, setFormResponse] = useState({});
   const [selectedOptions, setSelectedOptions] = useState("");
@@ -20,9 +29,36 @@ const FillForm = ({ connectWallet }) => {
   );
   const [newValue, setNewValue] = useState("");
   const router = useRouter();
+  console.log(router);
 
   useEffect(() => {
     setInputFields(fieldTypes);
+    const fetchForm = async (formId) => {
+      try {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const contract = new ethers.Contract(
+          CONTRACT_ADDRESS,
+          CONTRACT_ABI,
+          signer
+        );
+        const contractFormMetadata = await contract.MetaData(formId);
+        const formMetadataResponse = await axios.get(
+          `https://ipfs.infura.io/ipfs/${contractFormMetadata.CID}`
+        );
+        if (formMetadataResponse) {
+          setFormMetadata(formMetadataResponse.data);
+          setFormMetadataLoading(false);
+        }
+        getCurrentAccount();
+        setInputFields(formMetadataResponse.data);
+        console.log(formMetadataResponse.data[0]);
+        console.log(fieldTypes);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchForm(6);
   }, []);
 
   const onSubmit = (e) => {
@@ -41,7 +77,10 @@ const FillForm = ({ connectWallet }) => {
           {account ? (
             <span>{account.slice(0, 7) + "..." + account.slice(37, 42)}</span>
           ) : (
-            <button className="bg-white outline-2 outline-pink-700 outline focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded text-sm w-full sm:w-auto px-5 py-2 text-right">
+            <button
+              className="bg-white outline-2 outline-pink-700 outline focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded text-sm w-full sm:w-auto px-5 py-2 text-right"
+              onClick={connectWallet}
+            >
               Wallet
             </button>
           )}
