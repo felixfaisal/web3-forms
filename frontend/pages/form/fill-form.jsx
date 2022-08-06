@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState, useContext } from "react";
 import NewFormItem from "../../components/Form/NewFormItem";
@@ -6,9 +5,11 @@ import SelectItem from "../../components/Form/SelectItem";
 import AppContext from "../../context";
 import { ethers } from "ethers";
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../../constants/addresses";
-const axios = require("axios").default;
 
 import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { create } from "ipfs-http-client";
+const axios = require("axios").default;
+const client = create("https://ipfs.infura.io:5001/api/v0");
 
 const FillForm = ({
   connectWallet,
@@ -29,7 +30,6 @@ const FillForm = ({
   );
   const [newValue, setNewValue] = useState("");
   const router = useRouter();
-  console.log(router);
 
   useEffect(() => {
     setInputFields(fieldTypes);
@@ -52,22 +52,39 @@ const FillForm = ({
         }
         getCurrentAccount();
         setInputFields(formMetadataResponse.data);
-        console.log(formMetadataResponse.data[0]);
-        console.log(fieldTypes);
+        // console.log(formMetadataResponse.data);
+        // console.log(fieldTypes);
       } catch (error) {
         console.log(error);
       }
     };
-    fetchForm(6);
+    fetchForm(7);
   }, []);
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    setUserResponses([...userResponses, formResponse]);
-    localStorage.removeItem("inputFields");
-    localStorage.removeItem("formTitle");
-    console.log("form Response: ", formResponse);
-    // router.push('/form/responses')
+  const onSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      setUserResponses([...userResponses, formResponse]);
+      localStorage.removeItem("inputFields");
+      localStorage.removeItem("formTitle");
+      console.log("form Response: ", formResponse);
+      // router.push('/form/responses')
+      const added = await client.add(JSON.stringify(formResponse));
+      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      console.log(added.path);
+
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        CONTRACT_ABI,
+        signer
+      );
+      const fill_the_form_txn = await contract.fillForm(added.path, 7);
+      await fill_the_form_txn.wait();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
