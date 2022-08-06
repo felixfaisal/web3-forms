@@ -2,12 +2,8 @@ import React from "react";
 import AppContext from "../context";
 import { useEffect, useContext } from "react";
 import Modal from "../components/modal";
-const Dashboard = ({
-  setResponseData,
-  setShowModal,
-  myResponses
-}) => {
-  const { showModal, responseData, responseDataUser} = useContext(AppContext);
+const Dashboard = ({ setResponseData, setShowModal, myResponses }) => {
+  const { showModal, responseData, responseDataUser } = useContext(AppContext);
 
   const responsesArray = [
     { formId: 1, cid: "", creator: "0xAgdhh929920" },
@@ -22,8 +18,8 @@ const Dashboard = ({
     myResponses();
   }, []);
 
-  console.log(responseDataUser)
-  console.log(responseData) // 
+  console.log(responseDataUser);
+  console.log(responseData); //
 
   return (
     <section className="mb-4">
@@ -57,9 +53,7 @@ const Dashboard = ({
               </div>
               <div className="flex justify-end items-center">
                 <p className="text-red-500 font-semibold text-md ">
-                  {response[2].slice(0, 7) +
-                    "..." +
-                    response[2].slice(37, 42)}
+                  {response[2].slice(0, 7) + "..." + response[2].slice(37, 42)}
                 </p>
                 <img
                   className="bg-gradient-to-b from-red-500 h-7 w-7 rounded-full mx-2 object-cover mt-1 mr-2"
