@@ -1,15 +1,16 @@
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState, useContext } from "react";
 import NewFormItem from "../../components/Form/NewFormItem";
 import SelectItem from "../../components/Form/SelectItem";
 import AppContext from "../../context";
 import { ethers } from "ethers";
-import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../../constants/addresses";
-
-import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { create } from "ipfs-http-client";
+import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../../constants/addresses";
 const axios = require("axios").default;
 const client = create("https://ipfs.infura.io:5001/api/v0");
+
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 const FillForm = ({
   connectWallet,
@@ -30,6 +31,7 @@ const FillForm = ({
   );
   const [newValue, setNewValue] = useState("");
   const router = useRouter();
+  console.log(router);
 
   useEffect(() => {
     setInputFields(fieldTypes);
@@ -52,16 +54,32 @@ const FillForm = ({
         }
         getCurrentAccount();
         setInputFields(formMetadataResponse.data);
-        // console.log(formMetadataResponse.data);
+        // console.log(formMetadataResponse.data[0]);
         // console.log(fieldTypes);
       } catch (error) {
         console.log(error);
       }
     };
-    fetchForm(7);
+    fetchForm(11);
   }, []);
 
-  const onSubmit = async (e) => {
+  const onSubmit = async(e) => {
+    /* e.preventDefault();
+    setUserResponses([...userResponses, formResponse]);
+    localStorage.removeItem("inputFields");
+    localStorage.removeItem("formTitle");
+    // console.log("form Response: ", formResponse);
+    const added = await client.add(JSON.stringify(fieldTypes));
+    const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESS,
+      CONTRACT_ABI,
+      signer
+    );
+    const fill_the_form_txn = await contract.fillForm(added.path, 7);
+    await fill_the_form_txn.wait(); */
     try {
       e.preventDefault();
       setUserResponses([...userResponses, formResponse]);
@@ -80,11 +98,12 @@ const FillForm = ({
         CONTRACT_ABI,
         signer
       );
-      const fill_the_form_txn = await contract.fillForm(added.path, 7);
+      const fill_the_form_txn = await contract.fillForm(added.path, 11);
       await fill_the_form_txn.wait();
     } catch (error) {
       console.log(error);
     }
+    // router.push('/form/responses')
   };
 
   return (
