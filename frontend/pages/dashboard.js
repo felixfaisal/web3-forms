@@ -44,48 +44,44 @@ const Dashboard = ({
       </h1>
 
       <div className="flex justify-center items-center flex-wrap mb-6">
-        {!modalLoader ? (
-          responseData.map((response) => {
-            return (
-              <div
-                className="w-[300px] h-[250px] m-4  rounded-xl bg-gray-100"
-                key={response[2]}
-                onClick={() => {
-                  console.log(response);
-                  setShowModal(true);
-                  getModalResponse(response[0], response[1]);
-                }}
-              >
-                <img
-                  src="https://images.pexels.com/photos/7130560/pexels-photo-7130560.jpeg?auto=compress&cs=tinysrgb&w=600"
-                  alt=""
-                  className="h-[150px] w-[100%]"
-                />
-                <p className="text-[12px] font-semibold mx-2 text-gray-400 mt-1">
-                  FORM ID #{response[1]}
+        {responseData.map((response) => {
+          return (
+            <div
+              className="w-[300px] h-[250px] m-4  rounded-xl bg-gray-100"
+              key={response[2]}
+              onClick={() => {
+                console.log(response);
+                setShowModal(true);
+                getModalResponse(response[0], response[1]);
+              }}
+            >
+              <img
+                src="https://images.pexels.com/photos/7130560/pexels-photo-7130560.jpeg?auto=compress&cs=tinysrgb&w=600"
+                alt=""
+                className="h-[150px] w-[100%]"
+              />
+              <p className="text-[12px] font-semibold mx-2 text-gray-400 mt-1">
+                FORM ID #{response[1]}
+              </p>
+              <div className="flex justify-end items-start">
+                <p className="text-[12px] text-gray-400 font-semibold mx-2 ">
+                  CREATED BY
                 </p>
-                <div className="flex justify-end items-start">
-                  <p className="text-[12px] text-gray-400 font-semibold mx-2 ">
-                    CREATED BY
-                  </p>
-                </div>
-                <div className="flex justify-end items-center">
-                  <p className="text-red-500 font-semibold text-md ">
-                    {currentFormCreator.slice(0, 7) +
-                      "..." +
-                      currentFormCreator.slice(37, 42)}
-                  </p>
-                  <img
-                    className="bg-gradient-to-b from-red-500 h-7 w-7 rounded-full mx-2 object-cover mt-1 mr-2"
-                    src="https://cdn.todayscrypto.news/wp-content/uploads/2022/03/1.polygon-matic-logo.png"
-                  ></img>
-                </div>
               </div>
-            );
-          })
-        ) : (
-          <Loader />
-        )}
+              <div className="flex justify-end items-center">
+                <p className="text-red-500 font-semibold text-md ">
+                  {currentFormCreator.slice(0, 7) +
+                    "..." +
+                    currentFormCreator.slice(37, 42)}
+                </p>
+                <img
+                  className="bg-gradient-to-b from-red-500 h-7 w-7 rounded-full mx-2 object-cover mt-1 mr-2"
+                  src="https://cdn.todayscrypto.news/wp-content/uploads/2022/03/1.polygon-matic-logo.png"
+                ></img>
+              </div>
+            </div>
+          );
+        })}
       </div>
       <Modal
         setShowModal={setShowModal}
