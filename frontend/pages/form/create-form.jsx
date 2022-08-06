@@ -17,6 +17,7 @@ const client = create("https://ipfs.infura.io:5001/api/v0");
 
 const CreateFormPage = ({ connectWallet }) => {
   const { account } = useContext(AppContext);
+  console.log(account);
   const [formTitle, setFormTitle] = useLocalStorage("formTitle", "");
   const [fieldTypes, setFieldTypes] = useLocalStorage("inputFields", []);
   const [inputFields, setInputFields] = useState([
@@ -64,6 +65,7 @@ const CreateFormPage = ({ connectWallet }) => {
       );
       const fill_the_form_txn = await contract.createTheForm(added.path);
       await fill_the_form_txn.wait();
+      setSubmitForm(false);
     }
   }
   ipfs_fetch();
