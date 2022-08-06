@@ -30,36 +30,52 @@ const CreateFormPage = ({ connectWallet }) => {
   };
   const onSubmit = async (e) => {
     e.preventDefault();
+    // setFieldTypes(inputFields.filter((input, index) => index != 0));
+    // console.log(inputFields);
+    // console.log(fieldTypes);
     setAddingField(false);
     setSubmitForm(true);
-    console.log(inputFields);
-    setFieldTypes([...inputFields]);
-
-    const added = await client.add(JSON.stringify(fieldTypes));
+    /* const added = await client.add(JSON.stringify(fieldTypes));
     const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-
-    console.log(url);
-    // const provider = new ethers.providers.Web3Provider(ethereum);
-    // const signer = provider.getSigner();
-    // const contract = new ethers.Contract(
-    //   CONTRACT_ADDRESS,
-    //   CONTRACT_ABI,
-    //   signer
-    // );
-    // const fill_the_form_txn = await contract.createTheForm(added.path);
-    // await fill_the_form_txn.wait();
-    setInputFields([]);
+    // console.log("hey");
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESS,
+      CONTRACT_ABI,
+      signer
+    );
+    const fill_the_form_txn = await contract.createTheForm(added.path);
+    await fill_the_form_txn.wait(); */
   };
 
-  // useEffect(() => {
-  //   console.log("Form Types", fieldTypes);
-  // }, [fieldTypes]);
-  // useEffect(() => {
-  //   if (submitForm) {
-  //     setFieldTypes(inputFields.filter((input, index) => index != 0));
-  //     // router.push("/form/fill-form");
-  //   }
-  // }, [inputFields]);
+  useEffect(() => { const ipfs_fetch = async () => {
+    if(submitForm){
+      console.log("Form Types", fieldTypes);
+      const added = await client.add(JSON.stringify(fieldTypes));
+      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      console.log(url);
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        CONTRACT_ABI,
+        signer
+      );
+      const fill_the_form_txn = await contract.createTheForm(added.path);
+      await fill_the_form_txn.wait();
+    }
+  }
+  ipfs_fetch();
+    
+  }, [fieldTypes]);
+  useEffect(() => {
+    if (submitForm) {
+      setFieldTypes(inputFields.filter((input, index) => index != 0));
+      // console.log(inputFields);
+      // router.push("/form/fill-form");
+    }
+  }, [inputFields]); 
 
   return (
     <div className="container mx-auto min-h-screen flex justify-center items-center">
@@ -108,13 +124,14 @@ const CreateFormPage = ({ connectWallet }) => {
             />
             <p className="ml-2">Add Fields</p>
           </div>
-          <button
+          
+        </form>
+        <button
             onClick={onSubmit}
             className="text-white bg-pink-700 hover:bg-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center "
           >
             Submit
           </button>
-        </form>
       </div>
     </div>
   );
