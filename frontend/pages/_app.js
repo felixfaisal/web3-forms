@@ -28,6 +28,9 @@ function MyApp({ Component, pageProps }) {
   const [showModal, setShowModal] = useState(false);
   const [formMetadata, setFormMetadata] = useState(null);
   const [formMetadataLoading, setFormMetadataLoading] = useState(true);
+  const [modalResponse, setModalResponse] = useState("");
+  const [currentFormCreator, setCurrentFormCreater] = useState("");
+  const [modalLoader, setModalLoader] = useState(true);
   const connectWallet = async () => {
     try {
       const providerOptions = {
@@ -124,17 +127,17 @@ function MyApp({ Component, pageProps }) {
   //   await create_form_txn.wait();
   // };
 
-  const user_responses = async () => {
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      CONTRACT_ABI,
-      signer
-    );
-    const user_responses_txn = await contract.myResponses(1);
-    await user_responses_txn();
-  };
+  // const user_responses = async () => {
+  //   const provider = new ethers.providers.Web3Provider(ethereum);
+  //   const signer = provider.getSigner();
+  //   const contract = new ethers.Contract(
+  //     CONTRACT_ADDRESS,
+  //     CONTRACT_ABI,
+  //     signer
+  //   );
+  //   const user_responses_txn = await contract.myResponses(1);
+  //   await user_responses_txn();
+  // };
 
   useEffect(() => {
     getCurrentAccount();
@@ -213,6 +216,27 @@ function MyApp({ Component, pageProps }) {
     }
   };
 
+  const getModalResponse = async (cid, formId) => {
+    try {
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        CONTRACT_ABI,
+        signer
+      );
+      const responsesData = await contract.MetaData(formId);
+      if (responsesData) {
+        setCurrentFormCreater(responsesData[2]);
+      }
+      console.log(responsesData[2]);
+      const response = await axios.get(`https://ipfs.infura.io/ipfs/${cid}`);
+      setModalResponse(JSON.stringify(response.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getConnectedWallet();
     getCurrentAccount();
@@ -229,6 +253,9 @@ function MyApp({ Component, pageProps }) {
         formMetadata,
         formMetadataLoading,
         responseData,
+        modalResponse,
+        currentFormCreator,
+        modalLoader,
       }}
     >
       <Component
@@ -244,6 +271,8 @@ function MyApp({ Component, pageProps }) {
         setFormMetadata={setFormMetadata}
         setFormMetadataLoading={setFormMetadataLoading}
         getCurrentAccount={getCurrentAccount}
+        getModalResponse={getModalResponse}
+        setModalLoader={setModalLoader}
       />
     </AppContext.Provider>
   );

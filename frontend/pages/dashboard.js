@@ -2,24 +2,40 @@ import React from "react";
 import AppContext from "../context";
 import { useEffect, useContext } from "react";
 import Modal from "../components/modal";
-const Dashboard = ({ setResponseData, setShowModal, myResponses }) => {
-  const { showModal, responseData, responseDataUser } = useContext(AppContext);
+import Loader from "../components/loader";
+const Dashboard = ({
+  setResponseData,
+  setShowModal,
+  myResponses,
+  getModalResponse,
+  setModalLoader,
+}) => {
+  const {
+    showModal,
+    responseData,
+    responseDataUser,
+    modalResponse,
+    modalLoader,
+    currentFormCreator,
+  } = useContext(AppContext);
 
-  const responsesArray = [
-    { formId: 1, cid: "", creator: "0xAgdhh929920" },
-    { formId: 2, cid: "", creator: "0xjsjhsg27378hs" },
-    { formId: 3, cid: "", creator: "0xhsh72663ggw" },
-    { formId: 4, cid: "", creator: "0xysyys663673h" },
-    { formId: 5, cid: "", creator: "0xjsjhsg27378hs" },
-    { formId: 6, cid: "", creator: "0xhsh72663ggw" },
-  ];
+  // const responsesArray = [
+  //   { formId: 1, cid: "", creator: "0xAgdhh929920" },
+  //   { formId: 2, cid: "", creator: "0xjsjhsg27378hs" },
+  //   { formId: 3, cid: "", creator: "0xhsh72663ggw" },
+  //   { formId: 4, cid: "", creator: "0xysyys663673h" },
+  //   { formId: 5, cid: "", creator: "0xjsjhsg27378hs" },
+  //   { formId: 6, cid: "", creator: "0xhsh72663ggw" },
+  // ];
 
   useEffect(() => {
     myResponses();
   }, []);
-
-  console.log(responseDataUser);
-  console.log(responseData); //
+  useEffect(() => {
+    if (responseData) {
+      setModalLoader(false);
+    }
+  }, []);
 
   return (
     <section className="mb-4">
@@ -34,8 +50,9 @@ const Dashboard = ({ setResponseData, setShowModal, myResponses }) => {
               className="w-[300px] h-[250px] m-4  rounded-xl bg-gray-100"
               key={response[2]}
               onClick={() => {
-                console.log(response[1]);
+                console.log(response);
                 setShowModal(true);
+                getModalResponse(response[0], response[1]);
               }}
             >
               <img
@@ -53,7 +70,9 @@ const Dashboard = ({ setResponseData, setShowModal, myResponses }) => {
               </div>
               <div className="flex justify-end items-center">
                 <p className="text-red-500 font-semibold text-md ">
-                  {response[2].slice(0, 7) + "..." + response[2].slice(37, 42)}
+                  {currentFormCreator.slice(0, 7) +
+                    "..." +
+                    currentFormCreator.slice(37, 42)}
                 </p>
                 <img
                   className="bg-gradient-to-b from-red-500 h-7 w-7 rounded-full mx-2 object-cover mt-1 mr-2"
@@ -64,7 +83,11 @@ const Dashboard = ({ setResponseData, setShowModal, myResponses }) => {
           );
         })}
       </div>
-      <Modal setShowModal={setShowModal} showModal={showModal} />
+      <Modal
+        setShowModal={setShowModal}
+        showModal={showModal}
+        modalResponse={modalResponse}
+      />
     </section>
   );
 };
