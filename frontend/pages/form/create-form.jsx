@@ -1,11 +1,13 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import AddForm from "../../components/Form/AddForm"
 import FormItem from "../../components/Form/FormItem";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
-
-const CreateFormPage = () => {
+import AppContext from "../../context";
+const CreateFormPage = ({connectWallet}) => {
+  const {account}=useContext(AppContext);
+  console.log(account);
   const [formTitle, setFormTitle] = useLocalStorage("formTitle", "");
   const [fieldTypes, setFieldTypes] = useLocalStorage("inputFields", []);
   const [inputFields, setInputFields] = useState([
@@ -38,9 +40,16 @@ const CreateFormPage = () => {
     <div className="container mx-auto min-h-screen flex justify-center items-center">
       <div className=" bg-white p-10 rounded w-[500px]">
         <div className="flex justify-end">
-          <button className="bg-white outline-2 outline-pink-700 outline focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded text-sm w-full sm:w-auto px-5 py-2 text-right">
+          {
+            account?
+                     <span>
+                  {account.slice(0, 7) + "..." + account.slice(37, 42)}
+                  </span>
+            : (   <button onClick={connectWallet} className="bg-white outline-2 outline-pink-700 outline focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded text-sm w-full sm:w-auto px-5 py-2 text-right">
             Wallet
-          </button>
+          </button>)
+          }
+
         </div>
         <form className="mt-5">
           <FormItem

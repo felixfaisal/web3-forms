@@ -243,6 +243,7 @@ function MyApp({ Component, pageProps }) {
         myResponses={myResponses}
         setFormMetadata={setFormMetadata}
         setFormMetadataLoading={setFormMetadataLoading}
+        getCurrentAccount={getCurrentAccount}
       />
     </AppContext.Provider>
   );

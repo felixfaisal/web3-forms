@@ -12,6 +12,7 @@ export default function Form({
   setResponse,
   setFormMetadata,
   setFormMetadataLoading,
+  getCurrentAccount,
 }) {
   const { account, response, formMetadata, formMetadataLoading } =
     useContext(AppContext);
@@ -34,12 +35,13 @@ export default function Form({
           setFormMetadata(formMetadataResponse.data);
           setFormMetadataLoading(false);
         }
+        getCurrentAccount();
       } catch (error) {
         console.log(error);
       }
     };
     fetchForm(1);
-  }, [formMetadataLoading]);
+  }, [formMetadataLoading, account]);
   console.log(formMetadata);
 
   return (
