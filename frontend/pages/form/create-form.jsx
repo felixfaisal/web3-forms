@@ -17,7 +17,6 @@ const client = create("https://ipfs.infura.io:5001/api/v0");
 
 const CreateFormPage = ({ connectWallet }) => {
   const { account } = useContext(AppContext);
-  console.log(account);
   const [formTitle, setFormTitle] = useLocalStorage("formTitle", "");
   const [fieldTypes, setFieldTypes] = useLocalStorage("inputFields", []);
   const [inputFields, setInputFields] = useState([
@@ -31,32 +30,36 @@ const CreateFormPage = ({ connectWallet }) => {
   };
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log(fieldTypes);
     setAddingField(false);
     setSubmitForm(true);
+    console.log(inputFields);
+    setFieldTypes([...inputFields]);
+
     const added = await client.add(JSON.stringify(fieldTypes));
     const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-    console.log("hey");
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      CONTRACT_ABI,
-      signer
-    );
-    const fill_the_form_txn = await contract.createTheForm(added.path);
-    await fill_the_form_txn.wait();
+
+    console.log(url);
+    // const provider = new ethers.providers.Web3Provider(ethereum);
+    // const signer = provider.getSigner();
+    // const contract = new ethers.Contract(
+    //   CONTRACT_ADDRESS,
+    //   CONTRACT_ABI,
+    //   signer
+    // );
+    // const fill_the_form_txn = await contract.createTheForm(added.path);
+    // await fill_the_form_txn.wait();
+    setInputFields([]);
   };
 
-  useEffect(() => {
-    console.log("Form Types", fieldTypes);
-  }, [fieldTypes]);
-  useEffect(() => {
-    if (submitForm) {
-      setFieldTypes(inputFields.filter((input, index) => index != 0));
-      // router.push("/form/fill-form");
-    }
-  }, [inputFields]);
+  // useEffect(() => {
+  //   console.log("Form Types", fieldTypes);
+  // }, [fieldTypes]);
+  // useEffect(() => {
+  //   if (submitForm) {
+  //     setFieldTypes(inputFields.filter((input, index) => index != 0));
+  //     // router.push("/form/fill-form");
+  //   }
+  // }, [inputFields]);
 
   return (
     <div className="container mx-auto min-h-screen flex justify-center items-center">
